@@ -1,0 +1,14 @@
+{
+  "name": "clementine-so",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-07-23",
+  "assets": {
+    "binding": "ASSETS",
+    "directory": ".open-next/assets"
+  },
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "placement": {
+    "mode": "smart"
+  },
+  "minify": true
+}

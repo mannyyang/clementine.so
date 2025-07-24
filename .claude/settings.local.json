@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm install:*)",
+      "Bash(mkdir:*)",
+      "Bash(rm:*)",
+      "Bash(touch:*)",
+      "Bash(pnpm run:*)",
+      "Bash(ls:*)",
+      "Bash(pnpm add:*)",
+      "Bash(say \"Portfolio site setup complete. The project is ready for customization and deployment.\")",
+      "Bash(npx:*)",
+      "Bash(pnpm dev:*)",
+      "Bash(pkill:*)",
+      "Bash(true)",
+      "Bash(say \"I''ve completed the analysis of both projects. The main difference is that docubeam uses Tailwind CSS version 3 with traditional configuration, while clementine.so uses the new Tailwind CSS version 4 with a different setup approach. The styling issues in clementine.so are likely due to missing PostCSS configuration and different theme variable naming conventions.\")",
+      "Bash(git add:*)"
+    ],
+    "deny": []
+  }
+}

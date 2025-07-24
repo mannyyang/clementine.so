@@ -1,0 +1,44 @@
+{
+  "name": "clementine.so",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3100",
+    "build": "next build",
+    "start": "next start -p 3100",
+    "lint": "next lint",
+    "opennext:build": "opennextjs-cloudflare build",
+    "opennext:deploy": "opennextjs-cloudflare deploy",
+    "opennext:preview": "opennextjs-cloudflare preview",
+    "cf:build": "pnpm run opennext:build && wrangler deploy --dry-run --outdir=dist",
+    "cf:deploy": "pnpm run opennext:deploy"
+  },
+  "dependencies": {
+    "@opennextjs/cloudflare": "^1.0.4",
+    "@radix-ui/react-slot": "^1.1.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "framer-motion": "^11.15.0",
+    "lucide-react": "^0.468.0",
+    "next": "15.3.2",
+    "next-themes": "^0.4.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^2.6.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.31.0",
+    "@tailwindcss/postcss": "^4.1.11",
+    "@types/node": "^22.10.6",
+    "@types/react": "^19.0.5",
+    "@types/react-dom": "^19.0.3",
+    "eslint": "^9.18.0",
+    "eslint-config-next": "15.3.2",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.11",
+    "typescript": "^5.8.3",
+    "wrangler": "4"
+  },
+  "packageManager": "pnpm@9.10.0"
+}
