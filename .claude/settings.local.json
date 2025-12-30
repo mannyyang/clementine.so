@@ -16,7 +16,8 @@
       "Bash(say \"I''ve completed the analysis of both projects. The main difference is that docubeam uses Tailwind CSS version 3 with traditional configuration, while clementine.so uses the new Tailwind CSS version 4 with a different setup approach. The styling issues in clementine.so are likely due to missing PostCSS configuration and different theme variable naming conventions.\")",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(say \"Work in progress landing page created successfully\")"
+      "Bash(say \"Work in progress landing page created successfully\")",
+      "Bash(pnpm update:*)"
     ],
     "deny": []
   }
