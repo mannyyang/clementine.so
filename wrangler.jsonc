@@ -10,5 +10,8 @@
   "placement": {
     "mode": "smart"
   },
-  "minify": true
+  "minify": true,
+  "observability": {
+    "enabled": false
+  }
 }
