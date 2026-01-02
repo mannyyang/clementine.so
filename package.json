@@ -21,7 +21,7 @@
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.26",
     "lucide-react": "^0.562.0",
-    "next": "16.1.1",
+    "next": "15.5.9",
     "next-themes": "^0.4.6",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
@@ -35,16 +35,11 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.39.2",
-    "eslint-config-next": "16.1.1",
+    "eslint-config-next": "15.5.9",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.18",
     "typescript": "^5.9.3",
     "wrangler": "^4.56.0"
   },
-  "packageManager": "pnpm@9.10.0",
-  "pnpm": {
-    "patchedDependencies": {
-      "@opennextjs/cloudflare": "patches/@opennextjs__cloudflare.patch"
-    }
-  }
+  "packageManager": "pnpm@9.10.0"
 }
