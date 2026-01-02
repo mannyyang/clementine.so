@@ -1,10 +1,7 @@
 import type { Metadata } from "next"
 import React from "react"
-import { Inter } from "next/font/google"
 import "./globals.css"
 import { cn } from "@/lib/utils"
-
-const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "Clementine | Portfolio",
@@ -29,7 +26,6 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          inter.className,
           "min-h-screen bg-background font-sans antialiased"
         )}
       >

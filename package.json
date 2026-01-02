@@ -41,5 +41,10 @@
     "typescript": "^5.9.3",
     "wrangler": "^4.56.0"
   },
-  "packageManager": "pnpm@9.10.0"
+  "packageManager": "pnpm@9.10.0",
+  "pnpm": {
+    "patchedDependencies": {
+      "@opennextjs/cloudflare": "patches/@opennextjs__cloudflare.patch"
+    }
+  }
 }
