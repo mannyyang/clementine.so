@@ -6,7 +6,7 @@
     "binding": "ASSETS",
     "directory": ".open-next/assets"
   },
-  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "compatibility_flags": ["nodejs_compat_v2"],
   "placement": {
     "mode": "smart"
   },
