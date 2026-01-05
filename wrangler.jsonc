@@ -11,8 +11,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "clementine-mastra-db",
-      "database_id": "placeholder-will-be-replaced-after-creation"
+      "database_name": "clementine-db",
+      "database_id": "16992353-aaa1-499c-9095-bec5f3534093"
     }
   ],
   "placement": {
