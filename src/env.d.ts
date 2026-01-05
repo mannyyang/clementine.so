@@ -10,6 +10,8 @@ interface CloudflareEnv {
   DB: D1Database;
   /** Static assets binding */
   ASSETS: Fetcher;
+  /** Cloudflare Workers AI binding */
+  AI: Ai;
 }
 
 declare global {

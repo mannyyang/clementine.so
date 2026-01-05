@@ -15,6 +15,7 @@ export type CloudflareEnv = {
  */
 export function createMastra(env: CloudflareEnv) {
   const storage = new D1Store({
+    id: "clementine-db",
     binding: env.DB,
     tablePrefix: "mastra_",
   });

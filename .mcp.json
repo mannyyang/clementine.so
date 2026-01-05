@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["@anthropic-ai/mcp-playwright@latest"]
+    },
+    "mastra": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@mastra/mcp-docs-server"]
+    },
+    "cloudflare": {
+      "command": "npx",
+      "args": ["mcp-remote", "https://docs.mcp.cloudflare.com/mcp"]
+    }
+  }
+}

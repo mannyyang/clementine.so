@@ -18,7 +18,22 @@
       "Bash(git commit:*)",
       "Bash(say \"Work in progress landing page created successfully\")",
       "Bash(pnpm update:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "WebSearch",
+      "WebFetch(domain:developers.cloudflare.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:ai-sdk.dev)",
+      "WebFetch(domain:mastra.ai)",
+      "Bash(pnpm exec wrangler:*)",
+      "mcp__mastra__mastraMigration",
+      "Bash(pnpm view:*)",
+      "Bash(cat:*)",
+      "Bash(find:*)",
+      "Bash(curl:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_type",
+      "mcp__playwright__browser_console_messages",
+      "mcp__playwright__browser_close"
     ],
     "deny": []
   }
