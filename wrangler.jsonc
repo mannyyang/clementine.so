@@ -7,6 +7,14 @@
     "directory": ".open-next/assets"
   },
   "compatibility_flags": ["nodejs_compat_v2"],
+  // D1 Database for Mastra storage
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "clementine-mastra-db",
+      "database_id": "placeholder-will-be-replaced-after-creation"
+    }
+  ],
   "placement": {
     "mode": "smart"
   },
