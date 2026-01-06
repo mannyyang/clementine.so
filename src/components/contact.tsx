@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Mail, Github, Linkedin, Twitter } from "lucide-react"
+import { Mail, Github, Linkedin, Twitter, Phone } from "lucide-react"
 
 export default function Contact() {
   const socials = [
@@ -24,6 +24,11 @@ export default function Contact() {
       name: "Twitter",
       href: "https://twitter.com",
       icon: Twitter,
+    },
+    {
+      name: "Phone",
+      href: "tel:5627283398",
+      icon: Phone,
     },
   ]
 
