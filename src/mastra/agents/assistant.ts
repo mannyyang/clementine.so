@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { projectsContext } from "../context/projects";
 
 /**
  * Agent configuration for the assistant
@@ -16,9 +17,13 @@ import { z } from "zod";
  * });
  * ```
  */
-export const assistantInstructions = `You are a helpful assistant for Clementine's portfolio website.
+export const assistantInstructions = `You are a helpful assistant for Manny Yang's portfolio website (Clementine.so).
 You help visitors learn about projects, skills, and how to get in touch.
-Be friendly, professional, and concise in your responses.`;
+Be friendly, professional, and concise in your responses.
+
+Use the following context to answer questions about projects and work:
+
+${projectsContext}`;
 
 /**
  * Input schema for the assistant agent
