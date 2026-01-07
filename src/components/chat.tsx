@@ -47,7 +47,7 @@ export function Chat() {
   return (
     <div className="flex flex-col h-full w-full max-w-2xl mx-auto">
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto min-h-0">
         {messages.length === 0 ? (
           <div className="flex h-full items-center justify-center p-8">
             <div className="text-center space-y-4">
@@ -96,8 +96,8 @@ export function Chat() {
         )}
       </div>
 
-      {/* Input Area */}
-      <div className="border-t border-border bg-background/80 backdrop-blur-sm p-4">
+      {/* Input Area - Fixed at bottom */}
+      <div className="flex-shrink-0 border-t border-border bg-background/80 backdrop-blur-sm p-4">
         <form onSubmit={onSubmit} className="relative">
           <textarea
             ref={inputRef}
