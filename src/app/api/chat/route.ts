@@ -3,6 +3,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { createWorkersAI } from "workers-ai-provider";
 import { streamText, convertToModelMessages, type UIMessage } from "ai";
 import { assistantInstructions } from "@/mastra/agents/assistant";
+import { createSaveContactTool } from "@/mastra/tools/contact";
 
 export const runtime = "nodejs";
 
@@ -23,6 +24,10 @@ export async function POST(request: Request) {
     model,
     system: assistantInstructions,
     messages,
+    tools: {
+      saveContact: createSaveContactTool(env.DB),
+    },
+    maxSteps: 3,
   });
 
   return result.toUIMessageStreamResponse();
