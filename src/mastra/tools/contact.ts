@@ -1,5 +1,5 @@
+import { createTool } from "@mastra/core/tools";
 import { z } from "zod";
-import { tool } from "ai";
 import type { D1Database } from "@cloudflare/workers-types";
 
 /**
@@ -16,10 +16,15 @@ export type ContactInput = z.infer<typeof contactSchema>;
  * Creates a tool for saving contact information to D1 database
  */
 export function createSaveContactTool(db: D1Database) {
-  return tool({
+  return createTool({
+    id: "save-contact",
     description:
       "Save a visitor's contact information (email required, name optional) to the database. Use this when a user provides their contact details.",
-    parameters: contactSchema,
+    inputSchema: contactSchema,
+    outputSchema: z.object({
+      success: z.boolean(),
+      message: z.string(),
+    }),
     execute: async ({ email, name }) => {
       try {
         await db
