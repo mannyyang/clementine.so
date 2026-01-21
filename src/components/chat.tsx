@@ -3,7 +3,7 @@
 import React, { useRef, useState, useMemo, useCallback } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { ArrowDown, ArrowUp, Mail, Plus } from "lucide-react";
+import { ArrowDown, ArrowUp, Mail, Plus, Send } from "lucide-react";
 import { StickToBottom, useStickToBottomContext } from "use-stick-to-bottom";
 import { ChatMessage } from "./ui/chat-message";
 import { WelcomeMessage } from "./ui/welcome-message";
@@ -184,6 +184,12 @@ export function Chat() {
     await sendMessage({ text: suggestion });
   };
 
+  const handleContactMe = async () => {
+    if (isLoading) return;
+    setHasInteracted(true);
+    await sendMessage({ text: "I'd like to get in touch! Here's my contact info:" });
+  };
+
   return (
     <div className="relative w-full h-full">
       {/* Conversation Area - full width/height with scrolling */}
@@ -293,6 +299,21 @@ export function Chat() {
                     )}
                   >
                     <Plus className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleContactMe}
+                    disabled={isLoading}
+                    className={cn(
+                      "flex items-center justify-center gap-1.5",
+                      "h-8 px-2 rounded-lg",
+                      "text-muted-foreground hover:text-foreground",
+                      "hover:bg-muted transition-colors",
+                      "disabled:opacity-50 disabled:cursor-not-allowed"
+                    )}
+                  >
+                    <Send className="h-4 w-4" />
+                    <span className="hidden sm:inline text-sm">Contact me</span>
                   </button>
                   <a
                     href="mailto:manuel@clementine.so"
