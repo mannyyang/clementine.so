@@ -93,22 +93,6 @@ export function ProjectDetailCard({ project, description }: ProjectDetailCardPro
             </>
           )}
 
-          {/* Category and role badges */}
-          <div className="absolute top-3 left-3 flex gap-2">
-            <span
-              className={cn(
-                "px-2.5 py-1 text-xs font-medium rounded-full",
-                project.category === "product"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-secondary text-secondary-foreground"
-              )}
-            >
-              {project.category === "product" ? "Product" : "Client"}
-            </span>
-            <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-background/80 backdrop-blur-sm text-foreground">
-              {project.role}
-            </span>
-          </div>
         </div>
 
         {/* Content */}
