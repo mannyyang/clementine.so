@@ -1,4 +1,82 @@
 /**
+ * Structured project data for UI components (cards, carousels, etc.)
+ */
+export interface Project {
+  id: string;
+  name: string;
+  tagline: string;
+  description: string;
+  url: string;
+  screenshots: string[];
+  techStack: string[];
+  role: string;
+  category: "product" | "client";
+}
+
+export const projects: Project[] = [
+  {
+    id: "checkify",
+    name: "Checkify.so",
+    tagline: "Notion todo aggregator",
+    description:
+      "Centralizes scattered Notion tasks into one unified database with automated discovery, bidirectional sync, and progress tracking.",
+    url: "https://checkify.so",
+    screenshots: ["/projects/placeholder.svg"],
+    techStack: ["Nuxt", "Supabase", "Stripe", "Tailwind"],
+    role: "Sole Developer/Founder",
+    category: "product",
+  },
+  {
+    id: "datatorag",
+    name: "DatatoRAG.com",
+    tagline: "Privacy-first RAG for HR",
+    description:
+      "Transforms scattered HR documentation into a queryable knowledge base with self-hosted AI models, Slack integration, and enterprise compliance.",
+    url: "https://datatorag.com",
+    screenshots: ["/projects/placeholder.svg"],
+    techStack: ["PipesHub.ai", "AWS", "RAG Pipeline"],
+    role: "Sole Developer/Founder",
+    category: "product",
+  },
+  {
+    id: "datagum",
+    name: "Datagum.ai",
+    tagline: "AI visibility monitoring",
+    description:
+      "Tracks how AI search engines cite your content and brands with citation monitoring, custom prompt testing, and visibility scoring.",
+    url: "https://datagum.ai",
+    screenshots: ["/projects/placeholder.svg"],
+    techStack: ["OpenNext", "Cloudflare Workers", "D1"],
+    role: "Sole Developer/Founder",
+    category: "product",
+  },
+  {
+    id: "mansoor",
+    name: "MansoorLawFirm.com",
+    tagline: "Estate & business planning law firm",
+    description:
+      "Professional website for a Los Angeles law firm specializing in estate planning and business law.",
+    url: "https://mansoorlawfirm.com",
+    screenshots: ["/projects/placeholder.svg"],
+    techStack: ["Tailwind CSS", "Poppins", "Fira Code"],
+    role: "Sole Developer",
+    category: "client",
+  },
+  {
+    id: "tammy",
+    name: "TammyBordeosCoaching.com",
+    tagline: "Executive coaching practice",
+    description:
+      "Website for an executive coaching and leadership development practice.",
+    url: "https://tammybordeoscoaching.com",
+    screenshots: ["/projects/placeholder.svg"],
+    techStack: ["Web Development"],
+    role: "Sole Developer",
+    category: "client",
+  },
+];
+
+/**
  * Project portfolio context for the AI assistant
  * This context is injected into the assistant's system prompt
  */

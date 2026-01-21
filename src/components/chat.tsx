@@ -1,32 +1,154 @@
 "use client";
 
-import React, { useRef, useEffect, useState, useMemo } from "react";
+import React, { useRef, useState, useMemo, useCallback } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { motion } from "framer-motion";
-import { Send } from "lucide-react";
+import { ArrowDown, ArrowUp, Paperclip, Plus } from "lucide-react";
+import { StickToBottom, useStickToBottomContext } from "use-stick-to-bottom";
 import { ChatMessage } from "./ui/chat-message";
+import { WelcomeMessage } from "./ui/welcome-message";
+import type { Project } from "@/mastra/context/projects";
 import { cn } from "@/lib/utils";
 
+// Generate a unique ID for thread identification
+function generateId() {
+  return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+}
+
+// Get or create a persistent thread ID from localStorage
+function getThreadId() {
+  if (typeof window === "undefined") return generateId();
+
+  const stored = localStorage.getItem("chat-thread-id");
+  if (stored) return stored;
+
+  const newId = generateId();
+  localStorage.setItem("chat-thread-id", newId);
+  return newId;
+}
+
+// Scroll to bottom button
+function ScrollToBottomButton() {
+  const { isAtBottom, scrollToBottom } = useStickToBottomContext();
+
+  const handleClick = useCallback(() => {
+    scrollToBottom();
+  }, [scrollToBottom]);
+
+  if (isAtBottom) return null;
+
+  return (
+    <button
+      onClick={handleClick}
+      className={cn(
+        "absolute bottom-4 left-1/2 -translate-x-1/2 z-10",
+        "flex items-center justify-center",
+        "h-8 w-8 rounded-full",
+        "bg-background border border-border shadow-md",
+        "hover:bg-muted transition-colors"
+      )}
+      type="button"
+    >
+      <ArrowDown className="h-4 w-4" />
+    </button>
+  );
+}
+
+// Suggestions component
+const suggestions = [
+  "What technologies do you work with?",
+  "Tell me about your process",
+  "How can we work together?",
+];
+
+function Suggestions({ onSuggestionClick }: { onSuggestionClick: (s: string) => void }) {
+  return (
+    <div className="w-full overflow-x-auto">
+      <div className="flex flex-nowrap gap-2 pb-3">
+        {suggestions.map((suggestion) => (
+          <button
+            key={suggestion}
+            onClick={() => onSuggestionClick(suggestion)}
+            className={cn(
+              "shrink-0 px-4 py-2 text-sm rounded-full",
+              "border border-border bg-background",
+              "hover:bg-muted transition-colors",
+              "cursor-pointer whitespace-nowrap"
+            )}
+            type="button"
+          >
+            {suggestion}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Custom loader matching reference
+function Loader() {
+  return (
+    <div className="inline-flex animate-spin items-center justify-center">
+      <svg
+        height={16}
+        strokeLinejoin="round"
+        style={{ color: "currentcolor" }}
+        viewBox="0 0 16 16"
+        width={16}
+      >
+        <title>Loading</title>
+        <g clipPath="url(#clip0_loader)">
+          <path d="M8 0V4" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M8 16V12" opacity="0.5" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M3.29773 1.52783L5.64887 4.7639" opacity="0.9" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M12.7023 1.52783L10.3511 4.7639" opacity="0.1" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M12.7023 14.472L10.3511 11.236" opacity="0.4" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M3.29773 14.472L5.64887 11.236" opacity="0.6" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M15.6085 5.52783L11.8043 6.7639" opacity="0.2" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M0.391602 10.472L4.19583 9.23598" opacity="0.7" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M15.6085 10.4722L11.8043 9.2361" opacity="0.3" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M0.391602 5.52783L4.19583 6.7639" opacity="0.8" stroke="currentColor" strokeWidth="1.5" />
+        </g>
+        <defs>
+          <clipPath id="clip0_loader">
+            <rect fill="white" height="16" width="16" />
+          </clipPath>
+        </defs>
+      </svg>
+    </div>
+  );
+}
+
 export function Chat() {
-  const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [input, setInput] = useState("");
+  const [showWelcome, setShowWelcome] = useState(true);
+
+  // Get persistent thread ID for conversation continuity
+  const threadId = useMemo(() => getThreadId(), []);
+  const resourceId = "visitor";
 
   const transport = useMemo(
-    () => new DefaultChatTransport({ api: "/api/chat" }),
-    []
+    () =>
+      new DefaultChatTransport({
+        api: "/api/chat",
+        body: { threadId, resourceId },
+      }),
+    [threadId]
   );
 
-  const { messages, sendMessage, status, error } = useChat({
+  const { messages, sendMessage, status } = useChat({
     transport,
   });
 
   const isLoading = status === "streaming" || status === "submitted";
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  // Handle "Learn More" click from project cards
+  const handleLearnMore = async (project: Project) => {
+    if (isLoading) return;
+    setShowWelcome(false);
+    await sendMessage({ text: `Tell me more about ${project.name}` });
+  };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +156,7 @@ export function Chat() {
 
     const message = input.trim();
     setInput("");
+    setShowWelcome(false);
     await sendMessage({ text: message });
   };
 
@@ -44,25 +167,28 @@ export function Chat() {
     }
   };
 
+  const handleSuggestionClick = async (suggestion: string) => {
+    if (isLoading) return;
+    setShowWelcome(false);
+    await sendMessage({ text: suggestion });
+  };
+
   return (
-    <div className="flex flex-col h-full w-full max-w-2xl mx-auto">
-      {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto min-h-0">
-        {messages.length === 0 ? (
-          <div className="flex h-full items-center justify-center p-8">
-            <div className="text-center space-y-4">
-              <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-lg text-muted-foreground"
-              >
-                Ask me anything about my projects, skills, or how to get in
-                touch.
-              </motion.p>
-            </div>
-          </div>
-        ) : (
-          <div className="py-4 space-y-2">
+    <div className="max-w-4xl mx-auto p-0 md:p-6 relative size-full">
+      <div className="flex flex-col h-full">
+        {/* Conversation Area */}
+        <StickToBottom
+          className="relative flex-1 overflow-y-auto"
+          initial="smooth"
+          resize="smooth"
+        >
+          <StickToBottom.Content className="p-4">
+            {/* Welcome message with project cards */}
+            {showWelcome && (
+              <WelcomeMessage onLearnMore={handleLearnMore} />
+            )}
+
+            {/* Conversation messages */}
             {messages.map((message) => (
               <ChatMessage
                 key={message.id}
@@ -75,59 +201,104 @@ export function Chat() {
                 }
               />
             ))}
-            {isLoading && (
-              <div className="px-4 py-2">
-                <motion.div
-                  animate={{ opacity: [0.4, 1, 0.4] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                  className="text-sm text-muted-foreground"
-                >
-                  Thinking...
-                </motion.div>
-              </div>
-            )}
-            {error && (
-              <div className="px-4 py-2 text-sm text-destructive">
-                Something went wrong. Please try again.
-              </div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
-        )}
-      </div>
 
-      {/* Input Area - Fixed at bottom */}
-      <div className="flex-shrink-0 border-t border-border bg-background/80 backdrop-blur-sm p-4">
-        <form onSubmit={onSubmit} className="relative">
-          <textarea
-            ref={inputRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Send a message..."
-            disabled={isLoading}
-            rows={1}
-            className={cn(
-              "w-full resize-none rounded-xl border border-input bg-background px-4 py-3 pr-12 text-sm",
-              "placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-              "disabled:cursor-not-allowed disabled:opacity-50",
-              "min-h-[48px] max-h-[200px]"
+            {/* Loading state */}
+            {status === "submitted" && (
+              <div className="flex items-center gap-2 py-4 text-muted-foreground">
+                <Loader />
+              </div>
             )}
-          />
-          <button
-            type="submit"
-            disabled={isLoading || !input?.trim()}
-            className={cn(
-              "absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg",
-              "text-muted-foreground hover:text-foreground hover:bg-muted",
-              "disabled:opacity-50 disabled:cursor-not-allowed",
-              "transition-colors"
-            )}
-          >
-            <Send className="h-4 w-4" />
-            <span className="sr-only">Send message</span>
-          </button>
-        </form>
+          </StickToBottom.Content>
+          <ScrollToBottomButton />
+        </StickToBottom>
+
+        {/* Suggestions */}
+        {showWelcome && messages.length === 0 && (
+          <Suggestions onSuggestionClick={handleSuggestionClick} />
+        )}
+
+        {/* Prompt Input */}
+        <div className="mt-4">
+          <form onSubmit={onSubmit}>
+            <div
+              className={cn(
+                "rounded-2xl border border-input bg-background",
+                "focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+                "transition-shadow overflow-hidden"
+              )}
+            >
+              {/* Input body */}
+              <div className="px-4 pt-3">
+                <textarea
+                  ref={inputRef}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Ask me anything..."
+                  disabled={isLoading}
+                  rows={1}
+                  className={cn(
+                    "w-full resize-none bg-transparent text-sm",
+                    "placeholder:text-muted-foreground",
+                    "focus:outline-none",
+                    "disabled:cursor-not-allowed disabled:opacity-50",
+                    "min-h-[24px] max-h-[200px]"
+                  )}
+                />
+              </div>
+
+              {/* Input footer */}
+              <div className="flex items-center justify-between px-3 py-2">
+                {/* Left side tools */}
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    className={cn(
+                      "flex items-center justify-center",
+                      "h-8 w-8 rounded-lg",
+                      "text-muted-foreground hover:text-foreground",
+                      "hover:bg-muted transition-colors"
+                    )}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    className={cn(
+                      "flex items-center justify-center",
+                      "h-8 w-8 rounded-lg",
+                      "text-muted-foreground hover:text-foreground",
+                      "hover:bg-muted transition-colors"
+                    )}
+                  >
+                    <Paperclip className="h-4 w-4" />
+                  </button>
+                </div>
+
+                {/* Submit button */}
+                <button
+                  type="submit"
+                  disabled={isLoading || !input?.trim()}
+                  className={cn(
+                    "flex items-center justify-center",
+                    "h-8 w-8 rounded-lg",
+                    "bg-primary text-primary-foreground",
+                    "hover:bg-primary/90",
+                    "disabled:opacity-50 disabled:cursor-not-allowed",
+                    "transition-colors"
+                  )}
+                >
+                  {isLoading ? (
+                    <Loader />
+                  ) : (
+                    <ArrowUp className="h-4 w-4" />
+                  )}
+                  <span className="sr-only">Send message</span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

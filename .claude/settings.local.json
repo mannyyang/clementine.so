@@ -45,7 +45,15 @@
       "Bash(pnpm exec tsc:*)",
       "mcp__mastra__searchMastraDocs",
       "Skill(superpowers:brainstorming)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_wait_for",
+      "mcp__playwright__browser_network_requests",
+      "mcp__playwright__browser_evaluate",
+      "Bash(pnpm list:*)",
+      "WebFetch(domain:blog.cloudflare.com)"
     ],
     "deny": []
   }
