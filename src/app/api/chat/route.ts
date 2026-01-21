@@ -1,6 +1,5 @@
 /// <reference path="../../../../worker-configuration.d.ts" />
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { createWorkersAI } from "workers-ai-provider";
 import {
   createUIMessageStream,
   createUIMessageStreamResponse,
@@ -10,6 +9,7 @@ import { toAISdkStream } from "@mastra/ai-sdk";
 import { D1Store } from "@mastra/cloudflare-d1";
 import { Memory } from "@mastra/memory";
 import { createAssistantAgent } from "@/mastra/agents/assistant";
+import { createGptOssModel } from "@/lib/gpt-oss-provider";
 
 export const runtime = "nodejs";
 
@@ -28,13 +28,13 @@ export async function POST(request: Request) {
 
   const memory = new Memory({ storage });
 
-  const workersai = createWorkersAI({ binding: env.AI });
-  // Use Llama 3.3 70b - supports function calling
-  const model = workersai(
-    "@cf/meta/llama-3.3-70b-instruct-fp8-fast" as Parameters<typeof workersai>[0]
-  );
+  // Use OpenAI's gpt-oss-120b - powerful reasoning model
+  const model = createGptOssModel("@cf/openai/gpt-oss-120b", {
+    binding: env.AI,
+  });
 
-  const agent = createAssistantAgent(model, env.DB, memory);
+  // Type assertion needed due to @ai-sdk/provider version mismatch
+  const agent = createAssistantAgent(model as Parameters<typeof createAssistantAgent>[0], env.DB, memory);
 
   const mastraStream = await agent.stream(
     messages as Parameters<typeof agent.stream>[0],
