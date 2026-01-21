@@ -184,157 +184,37 @@ export function createGptOssModel(
 
       console.log("[gpt-oss doStream] Input:", { systemInstruction: systemInstruction.slice(0, 100), userInput });
 
-      // Try to use actual streaming from Workers AI
-      const aiResponse = await settings.binding.run(
+      // Get the full response (gpt-oss doesn't support true streaming locally)
+      const response = (await settings.binding.run(
         modelId,
         {
           instructions: systemInstruction.trim(),
           input: userInput.trim(),
           reasoning: { effort: "low" },
-          stream: true, // Request streaming
         },
         settings.gateway ? { gateway: settings.gateway } : undefined
-      );
+      )) as GptOssResponse;
 
-      const textId = crypto.randomUUID().slice(0, 16);
-
-      // Check if we got a real stream back
-      if (aiResponse instanceof ReadableStream) {
-        console.log("[gpt-oss doStream] Got native stream");
-
-        // Transform the native stream to AI SDK format
-        const reader = aiResponse.getReader();
-        const decoder = new TextDecoder();
-        let buffer = "";
-        let totalText = "";
-        let streamStarted = false;
-        let textStarted = false;
-
-        const stream = new ReadableStream<LanguageModelV2StreamPart>({
-          async pull(controller) {
-            try {
-              const { done, value } = await reader.read();
-
-              if (!streamStarted) {
-                controller.enqueue({ type: "stream-start", warnings: [] });
-                streamStarted = true;
-              }
-
-              if (done) {
-                if (textStarted) {
-                  controller.enqueue({ type: "text-end", id: textId });
-                }
-                controller.enqueue({
-                  type: "finish",
-                  finishReason: "stop",
-                  usage: { inputTokens: 0, outputTokens: 0, totalTokens: 0 },
-                });
-                controller.close();
-                return;
-              }
-
-              buffer += decoder.decode(value, { stream: true });
-
-              // Parse SSE events from buffer
-              const lines = buffer.split("\n");
-              buffer = lines.pop() || ""; // Keep incomplete line in buffer
-
-              for (const line of lines) {
-                if (line.startsWith("data: ")) {
-                  const data = line.slice(6);
-                  if (data === "[DONE]") continue;
-
-                  try {
-                    const parsed = JSON.parse(data);
-                    // Extract text from the streaming response
-                    const text = parsed?.response ||
-                                 parsed?.choices?.[0]?.delta?.content ||
-                                 parsed?.output?.[0]?.content?.[0]?.text || "";
-
-                    if (text) {
-                      if (!textStarted) {
-                        controller.enqueue({ type: "text-start", id: textId });
-                        textStarted = true;
-                      }
-                      totalText += text;
-                      controller.enqueue({ type: "text-delta", id: textId, delta: text });
-                    }
-                  } catch {
-                    // Not valid JSON, might be raw text
-                    if (data && data !== "[DONE]") {
-                      if (!textStarted) {
-                        controller.enqueue({ type: "text-start", id: textId });
-                        textStarted = true;
-                      }
-                      totalText += data;
-                      controller.enqueue({ type: "text-delta", id: textId, delta: data });
-                    }
-                  }
-                }
-              }
-            } catch (error) {
-              console.error("[gpt-oss doStream] Stream error:", error);
-              controller.error(error);
-            }
-          },
-        });
-
-        return { stream };
-      }
-
-      // Fallback: If we got a regular response, simulate streaming with pull-based approach
-      console.log("[gpt-oss doStream] Fallback to simulated streaming");
-      const response = aiResponse as GptOssResponse;
       console.log("[gpt-oss doStream] Response:", JSON.stringify(response));
 
       const text = extractText(response);
+      const textId = crypto.randomUUID().slice(0, 16);
       const inputTokens = response?.usage?.input_tokens ?? response?.usage?.prompt_tokens ?? 0;
       const outputTokens = response?.usage?.output_tokens ?? response?.usage?.completion_tokens ?? 0;
 
-      // Use pull-based streaming for better chunking behavior
-      const chunkSize = 20;
-      let position = 0;
-      let phase: "start" | "text-start" | "text" | "text-end" | "finish" | "done" = "start";
-
+      // Emit all text at once (simulated streaming doesn't work well with downstream buffering)
       const stream = new ReadableStream<LanguageModelV2StreamPart>({
-        async pull(controller) {
-          // Small delay between pulls to create visual streaming effect
-          await new Promise((resolve) => setTimeout(resolve, 12));
-
-          switch (phase) {
-            case "start":
-              controller.enqueue({ type: "stream-start", warnings: [] });
-              phase = "text-start";
-              break;
-            case "text-start":
-              controller.enqueue({ type: "text-start", id: textId });
-              phase = "text";
-              break;
-            case "text":
-              if (position < text.length) {
-                const chunk = text.slice(position, position + chunkSize);
-                controller.enqueue({ type: "text-delta", id: textId, delta: chunk });
-                position += chunkSize;
-              } else {
-                phase = "text-end";
-              }
-              break;
-            case "text-end":
-              controller.enqueue({ type: "text-end", id: textId });
-              phase = "finish";
-              break;
-            case "finish":
-              controller.enqueue({
-                type: "finish",
-                finishReason: "stop",
-                usage: { inputTokens, outputTokens, totalTokens: inputTokens + outputTokens },
-              });
-              phase = "done";
-              break;
-            case "done":
-              controller.close();
-              break;
-          }
+        start(controller) {
+          controller.enqueue({ type: "stream-start", warnings: [] });
+          controller.enqueue({ type: "text-start", id: textId });
+          controller.enqueue({ type: "text-delta", id: textId, delta: text });
+          controller.enqueue({ type: "text-end", id: textId });
+          controller.enqueue({
+            type: "finish",
+            finishReason: "stop",
+            usage: { inputTokens, outputTokens, totalTokens: inputTokens + outputTokens },
+          });
+          controller.close();
         },
       });
 
