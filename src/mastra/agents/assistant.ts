@@ -1,22 +1,9 @@
-import { z } from "zod";
+import { Agent } from "@mastra/core/agent";
+import type { LanguageModelV1 } from "ai";
 import { projectsContext } from "../context/projects";
+import { createSaveContactTool } from "../tools/contact";
+import type { D1Database } from "@cloudflare/workers-types";
 
-/**
- * Agent configuration for the assistant
- * To create an agent, configure your preferred LLM provider:
- *
- * @example
- * ```ts
- * import { Agent } from "@mastra/core/agent";
- * import { openai } from "@ai-sdk/openai";
- *
- * const assistantAgent = new Agent({
- *   name: "assistant",
- *   instructions: assistantInstructions,
- *   model: openai("gpt-4o"),
- * });
- * ```
- */
 export const assistantInstructions = `You are a helpful assistant for Manny Yang's portfolio website (Clementine.so).
 You help visitors learn about projects, skills, and how to get in touch.
 Be friendly, professional, and concise in your responses.
@@ -30,10 +17,16 @@ Use the following context to answer questions about projects and work:
 ${projectsContext}`;
 
 /**
- * Input schema for the assistant agent
+ * Creates an assistant agent with the given model and database
  */
-export const assistantInputSchema = z.object({
-  message: z.string().describe("The user's message to the assistant"),
-});
-
-export type AssistantInput = z.infer<typeof assistantInputSchema>;
+export function createAssistantAgent(model: LanguageModelV1, db: D1Database) {
+  return new Agent({
+    id: "assistant",
+    name: "Portfolio Assistant",
+    instructions: assistantInstructions,
+    model,
+    tools: {
+      saveContact: createSaveContactTool(db),
+    },
+  });
+}
