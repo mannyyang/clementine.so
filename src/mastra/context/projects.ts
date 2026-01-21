@@ -21,7 +21,11 @@ export const projects: Project[] = [
     description:
       "Centralizes scattered Notion tasks into one unified database with automated discovery, bidirectional sync, and progress tracking.",
     url: "https://checkify.so",
-    screenshots: ["/projects/placeholder.svg"],
+    screenshots: [
+      "/projects/checkify/checkify-1.png",
+      "/projects/checkify/checkify-2.png",
+      "/projects/checkify/checkify-3.png",
+    ],
     techStack: ["Nuxt", "Supabase", "Stripe", "Tailwind"],
     role: "Sole Developer/Founder",
     category: "product",

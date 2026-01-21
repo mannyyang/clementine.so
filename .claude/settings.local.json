@@ -54,7 +54,10 @@
       "mcp__playwright__browser_evaluate",
       "Bash(pnpm list:*)",
       "WebFetch(domain:blog.cloudflare.com)",
-      "WebFetch(domain:platform.openai.com)"
+      "WebFetch(domain:platform.openai.com)",
+      "Bash(for f in Screenshot*.png)",
+      "Bash(do echo \"Found: $f\")",
+      "Bash(done)"
     ],
     "deny": []
   }

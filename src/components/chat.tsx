@@ -170,49 +170,50 @@ export function Chat() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-0 md:p-6 relative size-full">
-      <div className="flex flex-col h-full">
-        {/* Conversation Area */}
-        <StickToBottom
-          className="relative flex-1 overflow-y-auto"
-          initial="smooth"
-          resize="smooth"
-        >
-          <StickToBottom.Content className="p-4">
-            {/* Welcome message with project cards - always visible */}
-            <WelcomeMessage onLearnMore={handleLearnMore} />
+    <div className="relative w-full h-full">
+      {/* Conversation Area - full width/height with scrolling */}
+      <StickToBottom
+        className="absolute inset-0 overflow-y-auto"
+        initial="smooth"
+        resize="smooth"
+      >
+        <StickToBottom.Content className="max-w-4xl mx-auto p-4 pb-40">
+          {/* Welcome message with project cards - always visible */}
+          <WelcomeMessage onLearnMore={handleLearnMore} />
 
-            {/* Conversation messages */}
-            {messages.map((message) => (
-              <ChatMessage
-                key={message.id}
-                role={message.role as "user" | "assistant"}
-                content={
-                  message.parts
-                    ?.filter((part) => part.type === "text")
-                    .map((part) => (part as { type: "text"; text: string }).text)
-                    .join("") || ""
-                }
-              />
-            ))}
+          {/* Conversation messages */}
+          {messages.map((message) => (
+            <ChatMessage
+              key={message.id}
+              role={message.role as "user" | "assistant"}
+              content={
+                message.parts
+                  ?.filter((part) => part.type === "text")
+                  .map((part) => (part as { type: "text"; text: string }).text)
+                  .join("") || ""
+              }
+            />
+          ))}
 
-            {/* Loading state */}
-            {status === "submitted" && (
-              <div className="flex items-center gap-2 py-4 text-muted-foreground">
-                <Loader />
-              </div>
-            )}
-          </StickToBottom.Content>
-          <ScrollToBottomButton />
-        </StickToBottom>
+          {/* Loading state */}
+          {status === "submitted" && (
+            <div className="flex items-center gap-2 py-4 text-muted-foreground">
+              <Loader />
+            </div>
+          )}
+        </StickToBottom.Content>
+        <ScrollToBottomButton />
+      </StickToBottom>
 
-        {/* Suggestions - show only when no conversation yet */}
-        {messages.length === 0 && (
-          <Suggestions onSuggestionClick={handleSuggestionClick} />
-        )}
+      {/* Fixed bottom input area */}
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background to-transparent pt-8 pb-4 px-4">
+        <div className="max-w-4xl mx-auto">
+          {/* Suggestions - show only when no conversation yet */}
+          {messages.length === 0 && (
+            <Suggestions onSuggestionClick={handleSuggestionClick} />
+          )}
 
-        {/* Prompt Input */}
-        <div className="mt-4">
+          {/* Prompt Input */}
           <form onSubmit={onSubmit}>
             <div
               className={cn(

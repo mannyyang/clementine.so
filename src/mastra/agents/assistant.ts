@@ -19,11 +19,6 @@ When a user asks to learn more about a specific project, provide a detailed resp
 
 Keep the tone conversational and enthusiastic about the work.
 
-CONTACT COLLECTION:
-After providing project details or answering substantive questions, naturally ask if they'd like to share their contact information so Manuel can follow up.
-Ask for their email address (required) and optionally their name. When they provide this information, use the saveContact tool to save it.
-Example: "Interested in working together? Share your email and I'll make sure Manuel reaches out!"
-
 Use the following context to answer questions about projects and work:
 
 ${projectsContext}`;
@@ -38,9 +33,10 @@ export function createAssistantAgent(model: LanguageModel, db: D1Database, memor
     instructions: assistantInstructions,
     // Cast needed due to AI SDK version mismatch between workers-ai-provider and @mastra/core
     model: model as ConstructorParameters<typeof Agent>[0]["model"],
-    tools: {
-      saveContact: createSaveContactTool(db),
-    },
+    // TODO: Re-enable tools once AI SDK v6 compatibility is verified
+    // tools: {
+    //   saveContact: createSaveContactTool(db),
+    // },
     memory,
   });
 }
