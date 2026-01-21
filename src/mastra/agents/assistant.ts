@@ -1,5 +1,5 @@
 import { Agent } from "@mastra/core/agent";
-import type { LanguageModelV1 } from "ai";
+import type { LanguageModel } from "ai";
 import { projectsContext } from "../context/projects";
 import { createSaveContactTool } from "../tools/contact";
 import type { D1Database } from "@cloudflare/workers-types";
@@ -19,12 +19,13 @@ ${projectsContext}`;
 /**
  * Creates an assistant agent with the given model and database
  */
-export function createAssistantAgent(model: LanguageModelV1, db: D1Database) {
+export function createAssistantAgent(model: LanguageModel, db: D1Database) {
   return new Agent({
     id: "assistant",
     name: "Portfolio Assistant",
     instructions: assistantInstructions,
-    model,
+    // Cast needed due to AI SDK version mismatch between workers-ai-provider and @mastra/core
+    model: model as ConstructorParameters<typeof Agent>[0]["model"],
     tools: {
       saveContact: createSaveContactTool(db),
     },

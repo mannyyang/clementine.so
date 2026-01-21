@@ -33,7 +33,19 @@
       "mcp__playwright__browser_navigate",
       "mcp__playwright__browser_type",
       "mcp__playwright__browser_console_messages",
-      "mcp__playwright__browser_close"
+      "mcp__playwright__browser_close",
+      "mcp__cloudflare__search_cloudflare_documentation",
+      "WebFetch(domain:www.npmjs.com)",
+      "mcp__mastra__getMastraExports",
+      "mcp__mastra__getMastraExportDetails",
+      "mcp__mastra__mastraDocs",
+      "mcp__mastra__mastraExamples",
+      "Skill(superpowers:writing-plans)",
+      "Skill(superpowers:subagent-driven-development)",
+      "Bash(pnpm exec tsc:*)",
+      "mcp__mastra__searchMastraDocs",
+      "Skill(superpowers:brainstorming)",
+      "Bash(grep:*)"
     ],
     "deny": []
   }

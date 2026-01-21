@@ -16,8 +16,9 @@
   },
   "dependencies": {
     "@ai-sdk/react": "^3.0.6",
-    "@mastra/cloudflare-d1": "1.0.0-beta.8",
-    "@mastra/core": "1.0.0-beta.19",
+    "@mastra/ai-sdk": "^1.0.2",
+    "@mastra/cloudflare-d1": "1.0.0",
+    "@mastra/core": "1.0.4",
     "@opennextjs/cloudflare": "^1.14.7",
     "@radix-ui/react-slot": "^1.2.4",
     "ai": "^6.0.6",
