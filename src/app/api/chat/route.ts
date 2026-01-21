@@ -29,8 +29,11 @@ export async function POST(request: Request) {
   const memory = new Memory({ storage });
 
   const workersai = createWorkersAI({ binding: env.AI });
-  // Use Llama 3.1 70b for better reasoning and context following
-  const model = workersai("@cf/meta/llama-3.1-70b-instruct");
+  // Use Llama 3.3 70b for fast, high-quality responses
+  // Type assertion needed as workers-ai-provider types don't include newer models
+  const model = workersai(
+    "@cf/meta/llama-3.3-70b-instruct-fp8-fast" as Parameters<typeof workersai>[0]
+  );
 
   const agent = createAssistantAgent(model, env.DB, memory);
 

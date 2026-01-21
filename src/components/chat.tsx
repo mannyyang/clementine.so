@@ -122,7 +122,6 @@ function Loader() {
 export function Chat() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [input, setInput] = useState("");
-  const [showWelcome, setShowWelcome] = useState(true);
 
   // Get persistent thread ID for conversation continuity
   const threadId = useMemo(() => getThreadId(), []);
@@ -146,7 +145,6 @@ export function Chat() {
   // Handle "Learn More" click from project cards
   const handleLearnMore = async (project: Project) => {
     if (isLoading) return;
-    setShowWelcome(false);
     await sendMessage({ text: `Tell me more about ${project.name}` });
   };
 
@@ -156,7 +154,6 @@ export function Chat() {
 
     const message = input.trim();
     setInput("");
-    setShowWelcome(false);
     await sendMessage({ text: message });
   };
 
@@ -169,7 +166,6 @@ export function Chat() {
 
   const handleSuggestionClick = async (suggestion: string) => {
     if (isLoading) return;
-    setShowWelcome(false);
     await sendMessage({ text: suggestion });
   };
 
@@ -183,10 +179,8 @@ export function Chat() {
           resize="smooth"
         >
           <StickToBottom.Content className="p-4">
-            {/* Welcome message with project cards */}
-            {showWelcome && (
-              <WelcomeMessage onLearnMore={handleLearnMore} />
-            )}
+            {/* Welcome message with project cards - always visible */}
+            <WelcomeMessage onLearnMore={handleLearnMore} />
 
             {/* Conversation messages */}
             {messages.map((message) => (
@@ -212,8 +206,8 @@ export function Chat() {
           <ScrollToBottomButton />
         </StickToBottom>
 
-        {/* Suggestions */}
-        {showWelcome && messages.length === 0 && (
+        {/* Suggestions - show only when no conversation yet */}
+        {messages.length === 0 && (
           <Suggestions onSuggestionClick={handleSuggestionClick} />
         )}
 
