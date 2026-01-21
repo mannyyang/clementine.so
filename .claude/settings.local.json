@@ -57,7 +57,11 @@
       "WebFetch(domain:platform.openai.com)",
       "Bash(for f in Screenshot*.png)",
       "Bash(do echo \"Found: $f\")",
-      "Bash(done)"
+      "Bash(done)",
+      "mcp__mastra__mastraChanges",
+      "Bash(lsof:*)",
+      "Bash(xargs kill:*)",
+      "mcp__playwright__browser_take_screenshot"
     ],
     "deny": []
   }
