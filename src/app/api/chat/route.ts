@@ -28,7 +28,7 @@ export async function POST(request: Request) {
 
   const memory = new Memory({ storage });
 
-  // Use Llama 4 Scout with native streaming support
+  // Use Llama 4 Scout - fast with native streaming
   const workersai = createWorkersAI({ binding: env.AI });
   const model = workersai("@cf/meta/llama-4-scout-17b-16e-instruct");
 

@@ -33,7 +33,7 @@ export function createAssistantAgent(model: LanguageModel, db: D1Database, memor
     instructions: assistantInstructions,
     // Cast needed due to AI SDK version mismatch between workers-ai-provider and @mastra/core
     model: model as ConstructorParameters<typeof Agent>[0]["model"],
-    // Tools disabled - gpt-oss doesn't support function calling
+    // TODO: Re-enable when workers-ai-provider properly supports tool calling
     // tools: {
     //   saveContact: createSaveContactTool(db),
     // },
