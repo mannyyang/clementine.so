@@ -184,7 +184,7 @@ export function createGptOssModel(
 
       console.log("[gpt-oss doStream] Input:", { systemInstruction: systemInstruction.slice(0, 100), userInput });
 
-      // Get the full response (gpt-oss doesn't support true streaming locally)
+      // Get full response and emit at once (no simulated streaming)
       const response = (await settings.binding.run(
         modelId,
         {
@@ -202,7 +202,6 @@ export function createGptOssModel(
       const inputTokens = response?.usage?.input_tokens ?? response?.usage?.prompt_tokens ?? 0;
       const outputTokens = response?.usage?.output_tokens ?? response?.usage?.completion_tokens ?? 0;
 
-      // Emit all text at once (simulated streaming doesn't work well with downstream buffering)
       const stream = new ReadableStream<LanguageModelV2StreamPart>({
         start(controller) {
           controller.enqueue({ type: "stream-start", warnings: [] });
