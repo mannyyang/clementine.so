@@ -8,8 +8,8 @@ import {
 import { toAISdkStream } from "@mastra/ai-sdk";
 import { D1Store } from "@mastra/cloudflare-d1";
 import { Memory } from "@mastra/memory";
+import { createWorkersAI } from "workers-ai-provider";
 import { createAssistantAgent } from "@/mastra/agents/assistant";
-import { createGptOssModel } from "@/lib/gpt-oss-provider";
 
 export const runtime = "nodejs";
 
@@ -28,10 +28,9 @@ export async function POST(request: Request) {
 
   const memory = new Memory({ storage });
 
-  // Use OpenAI's gpt-oss-120b - powerful reasoning model
-  const model = createGptOssModel("@cf/openai/gpt-oss-120b", {
-    binding: env.AI,
-  });
+  // Use Llama 4 Scout with native streaming support
+  const workersai = createWorkersAI({ binding: env.AI });
+  const model = workersai("@cf/meta/llama-4-scout-17b-16e-instruct");
 
   // Type assertion needed due to @ai-sdk/provider version mismatch
   const agent = createAssistantAgent(model as Parameters<typeof createAssistantAgent>[0], env.DB, memory);
