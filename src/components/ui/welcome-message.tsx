@@ -5,7 +5,7 @@ import { ProjectGrid } from "./project-grid";
 import { projects, type Project } from "@/mastra/context/projects";
 
 interface WelcomeMessageProps {
-  onLearnMore: (project: Project) => void;
+  onLearnMore: (_project: Project) => void;
 }
 
 export function WelcomeMessage({ onLearnMore }: WelcomeMessageProps) {

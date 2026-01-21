@@ -9,6 +9,12 @@ export const assistantInstructions = `You are a helpful assistant for Manuel Yan
 You help visitors learn about projects, skills, and how to get in touch.
 Be friendly, professional, and concise in your responses.
 
+IMPORTANT - SAVING CONTACT INFORMATION:
+When a user provides their email address (and optionally their name), you MUST use the saveContact tool to save their information.
+Do NOT just say you saved it - actually call the saveContact tool with the email and name.
+Example: If user says "my email is john@example.com", call saveContact with {"email": "john@example.com"}.
+Example: If user says "I'm Jane Smith, jane@test.com", call saveContact with {"email": "jane@test.com", "name": "Jane Smith"}.
+
 RESPONDING TO "Tell me more about [Project]":
 When a user asks to learn more about a specific project, provide a detailed response that includes:
 1. A 2-3 sentence expanded description of what the project does and the problem it solves
@@ -33,10 +39,9 @@ export function createAssistantAgent(model: LanguageModel, db: D1Database, memor
     instructions: assistantInstructions,
     // Cast needed due to AI SDK version mismatch between workers-ai-provider and @mastra/core
     model: model as ConstructorParameters<typeof Agent>[0]["model"],
-    // TODO: Re-enable when workers-ai-provider properly supports tool calling
-    // tools: {
-    //   saveContact: createSaveContactTool(db),
-    // },
+    tools: {
+      saveContact: createSaveContactTool(db),
+    },
     memory,
   });
 }

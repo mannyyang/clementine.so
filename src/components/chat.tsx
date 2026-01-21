@@ -3,7 +3,7 @@
 import React, { useRef, useState, useMemo, useCallback } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { ArrowDown, ArrowUp, Paperclip, Plus } from "lucide-react";
+import { ArrowDown, ArrowUp, Mail, Plus } from "lucide-react";
 import { StickToBottom, useStickToBottomContext } from "use-stick-to-bottom";
 import { ChatMessage } from "./ui/chat-message";
 import { WelcomeMessage } from "./ui/welcome-message";
@@ -72,7 +72,7 @@ const suggestions = [
   "How can we work together?",
 ];
 
-function Suggestions({ onSuggestionClick }: { onSuggestionClick: (s: string) => void }) {
+function Suggestions({ onSuggestionClick }: { onSuggestionClick: (_suggestion: string) => void }) {
   return (
     <div className="w-full overflow-x-auto">
       <div className="flex flex-nowrap gap-2 pb-3">
@@ -133,6 +133,7 @@ function Loader() {
 export function Chat() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [input, setInput] = useState("");
+  const [hasInteracted, setHasInteracted] = useState(false);
 
   // Get persistent thread ID for conversation continuity
   const threadId = useMemo(() => getThreadId(), []);
@@ -156,6 +157,7 @@ export function Chat() {
   // Handle "Learn More" click from project cards
   const handleLearnMore = async (project: Project) => {
     if (isLoading) return;
+    setHasInteracted(true);
     await sendMessage({ text: `Tell me more about ${project.name}` });
   };
 
@@ -165,6 +167,7 @@ export function Chat() {
 
     const message = input.trim();
     setInput("");
+    setHasInteracted(true);
     await sendMessage({ text: message });
   };
 
@@ -177,6 +180,7 @@ export function Chat() {
 
   const handleSuggestionClick = async (suggestion: string) => {
     if (isLoading) return;
+    setHasInteracted(true);
     await sendMessage({ text: suggestion });
   };
 
@@ -185,7 +189,7 @@ export function Chat() {
       {/* Conversation Area - full width/height with scrolling */}
       <StickToBottom
         className="absolute inset-0 overflow-y-auto"
-        initial="smooth"
+        initial={hasInteracted ? "smooth" : false}
         resize="smooth"
       >
         <StickToBottom.Content className="max-w-4xl mx-auto p-4 pb-40">
@@ -236,7 +240,10 @@ export function Chat() {
       </StickToBottom>
 
       {/* Fixed bottom input area */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background to-transparent pt-8 pb-4 px-4">
+      <div
+        className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background to-transparent pt-8 px-4"
+        style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}
+      >
         <div className="max-w-4xl mx-auto">
           {/* Suggestions - show only when no conversation yet */}
           {messages.length === 0 && (
@@ -287,17 +294,18 @@ export function Chat() {
                   >
                     <Plus className="h-4 w-4" />
                   </button>
-                  <button
-                    type="button"
+                  <a
+                    href="mailto:manuel@clementine.so"
                     className={cn(
-                      "flex items-center justify-center",
-                      "h-8 w-8 rounded-lg",
+                      "flex items-center justify-center gap-1.5",
+                      "h-8 px-2 rounded-lg",
                       "text-muted-foreground hover:text-foreground",
                       "hover:bg-muted transition-colors"
                     )}
                   >
-                    <Paperclip className="h-4 w-4" />
-                  </button>
+                    <Mail className="h-4 w-4" />
+                    <span className="hidden sm:inline text-sm">Email me</span>
+                  </a>
                 </div>
 
                 {/* Submit button */}

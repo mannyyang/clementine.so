@@ -6,7 +6,7 @@ import type { Project } from "@/mastra/context/projects";
 
 interface ProjectGridProps {
   projects: Project[];
-  onLearnMore: (project: Project) => void;
+  onLearnMore: (_project: Project) => void;
 }
 
 const containerVariants = {

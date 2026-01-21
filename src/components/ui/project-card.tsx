@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 
 interface ProjectCardProps {
   project: Project;
-  onLearnMore: (project: Project) => void;
+  onLearnMore: (_project: Project) => void;
 }
 
 export function ProjectCard({ project, onLearnMore }: ProjectCardProps) {
