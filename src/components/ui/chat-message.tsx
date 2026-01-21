@@ -3,14 +3,22 @@
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import { cn } from "@/lib/utils";
+import { ProjectDetailCard } from "./project-detail-card";
+import type { Project } from "@/mastra/context/projects";
 
 interface ChatMessageProps {
   role: "user" | "assistant";
   content: string;
+  project?: Project | null;
 }
 
-export function ChatMessage({ role, content }: ChatMessageProps) {
+export function ChatMessage({ role, content, project }: ChatMessageProps) {
   const isUser = role === "user";
+
+  // If this is an assistant message about a project, render rich card
+  if (!isUser && project && content) {
+    return <ProjectDetailCard project={project} description={content} />;
+  }
 
   return (
     <motion.div

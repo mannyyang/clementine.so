@@ -7,8 +7,19 @@ import { ArrowDown, ArrowUp, Paperclip, Plus } from "lucide-react";
 import { StickToBottom, useStickToBottomContext } from "use-stick-to-bottom";
 import { ChatMessage } from "./ui/chat-message";
 import { WelcomeMessage } from "./ui/welcome-message";
-import type { Project } from "@/mastra/context/projects";
+import { projects, type Project } from "@/mastra/context/projects";
 import { cn } from "@/lib/utils";
+
+// Helper to find a project from a "Tell me more about X" message
+function findProjectFromMessage(message: string): Project | null {
+  const lowerMessage = message.toLowerCase();
+  for (const project of projects) {
+    if (lowerMessage.includes(project.name.toLowerCase())) {
+      return project;
+    }
+  }
+  return null;
+}
 
 // Generate a unique ID for thread identification
 function generateId() {
@@ -41,7 +52,7 @@ function ScrollToBottomButton() {
     <button
       onClick={handleClick}
       className={cn(
-        "absolute bottom-4 left-1/2 -translate-x-1/2 z-10",
+        "absolute bottom-36 left-1/2 -translate-x-1/2 z-20",
         "flex items-center justify-center",
         "h-8 w-8 rounded-full",
         "bg-background border border-border shadow-md",
@@ -182,18 +193,34 @@ export function Chat() {
           <WelcomeMessage onLearnMore={handleLearnMore} />
 
           {/* Conversation messages */}
-          {messages.map((message) => (
-            <ChatMessage
-              key={message.id}
-              role={message.role as "user" | "assistant"}
-              content={
-                message.parts
+          {messages.map((message, index) => {
+            const content = message.parts
+              ?.filter((part) => part.type === "text")
+              .map((part) => (part as { type: "text"; text: string }).text)
+              .join("") || "";
+
+            // For assistant messages, check if the previous user message was about a project
+            let relatedProject: Project | null = null;
+            if (message.role === "assistant" && index > 0) {
+              const prevMessage = messages[index - 1];
+              if (prevMessage?.role === "user") {
+                const prevContent = prevMessage.parts
                   ?.filter((part) => part.type === "text")
                   .map((part) => (part as { type: "text"; text: string }).text)
-                  .join("") || ""
+                  .join("") || "";
+                relatedProject = findProjectFromMessage(prevContent);
               }
-            />
-          ))}
+            }
+
+            return (
+              <ChatMessage
+                key={message.id}
+                role={message.role as "user" | "assistant"}
+                content={content}
+                project={relatedProject}
+              />
+            );
+          })}
 
           {/* Loading state - show during submitted or streaming with no visible content */}
           {(status === "submitted" || (status === "streaming" && messages.length > 0 &&
