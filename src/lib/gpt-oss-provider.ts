@@ -200,9 +200,12 @@ export function createGptOssModel(
       const text = extractText(response);
       const textId = crypto.randomUUID().slice(0, 16);
 
-      // Simulate streaming by emitting the full text in chunks
+      // Simulate streaming by emitting the full text in chunks with delays
+      const inputTokens = response?.usage?.input_tokens ?? response?.usage?.prompt_tokens ?? 0;
+      const outputTokens = response?.usage?.output_tokens ?? response?.usage?.completion_tokens ?? 0;
+
       const stream = new ReadableStream<LanguageModelV2StreamPart>({
-        start(controller) {
+        async start(controller) {
           // Stream start
           controller.enqueue({
             type: "stream-start",
@@ -215,14 +218,20 @@ export function createGptOssModel(
             id: textId,
           });
 
-          // Emit text in chunks to simulate streaming
-          const chunkSize = 20;
+          // Emit text in chunks with small delays to simulate streaming
+          const chunkSize = 15; // Smaller chunks for smoother appearance
+          const delayMs = 10; // Small delay between chunks
+
           for (let i = 0; i < text.length; i += chunkSize) {
             controller.enqueue({
               type: "text-delta",
               id: textId,
               delta: text.slice(i, i + chunkSize),
             });
+            // Add small delay between chunks for visual streaming effect
+            if (i + chunkSize < text.length) {
+              await new Promise((resolve) => setTimeout(resolve, delayMs));
+            }
           }
 
           // Text end
@@ -232,8 +241,6 @@ export function createGptOssModel(
           });
 
           // Finish
-          const inputTokens = response?.usage?.input_tokens ?? response?.usage?.prompt_tokens ?? 0;
-          const outputTokens = response?.usage?.output_tokens ?? response?.usage?.completion_tokens ?? 0;
           controller.enqueue({
             type: "finish",
             finishReason: "stop",

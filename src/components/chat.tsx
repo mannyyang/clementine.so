@@ -195,8 +195,11 @@ export function Chat() {
             />
           ))}
 
-          {/* Loading state */}
-          {status === "submitted" && (
+          {/* Loading state - show during submitted or streaming with no visible content */}
+          {(status === "submitted" || (status === "streaming" && messages.length > 0 &&
+            !messages[messages.length - 1]?.parts?.some(
+              (part) => part.type === "text" && (part as { type: "text"; text: string }).text?.length > 0
+            ))) && (
             <div className="flex items-center gap-2 py-4 text-muted-foreground">
               <Loader />
             </div>
