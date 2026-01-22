@@ -37,7 +37,11 @@ export const projects: Project[] = [
     description:
       "Transforms scattered HR documentation into a queryable knowledge base with self-hosted AI models, Slack integration, and enterprise compliance.",
     url: "https://datatorag.com",
-    screenshots: ["/projects/placeholder.svg"],
+    screenshots: [
+      "/projects/datatorag/datatorag-1.png",
+      "/projects/datatorag/datatorag-2.png",
+      "/projects/datatorag/datatorag-3.png",
+    ],
     techStack: ["PipesHub.ai", "AWS", "RAG Pipeline"],
     role: "Sole Developer/Founder",
     category: "product",
@@ -49,7 +53,11 @@ export const projects: Project[] = [
     description:
       "Tracks how AI search engines cite your content and brands with citation monitoring, custom prompt testing, and visibility scoring.",
     url: "https://datagum.ai",
-    screenshots: ["/projects/placeholder.svg"],
+    screenshots: [
+      "/projects/datagum/datagum-1.png",
+      "/projects/datagum/datagum-2.png",
+      "/projects/datagum/datagum-3.png",
+    ],
     techStack: ["OpenNext", "Cloudflare Workers", "D1"],
     role: "Sole Developer/Founder",
     category: "product",
@@ -61,7 +69,11 @@ export const projects: Project[] = [
     description:
       "Professional website for a Los Angeles law firm specializing in estate planning and business law.",
     url: "https://mansoorlawfirm.com",
-    screenshots: ["/projects/placeholder.svg"],
+    screenshots: [
+      "/projects/mansoorlawfirm/mansoor-1.png",
+      "/projects/mansoorlawfirm/mansoor-2.png",
+      "/projects/mansoorlawfirm/mansoor-3.png",
+    ],
     techStack: ["Tailwind CSS", "Poppins", "Fira Code"],
     role: "Sole Developer",
     category: "client",
@@ -73,7 +85,11 @@ export const projects: Project[] = [
     description:
       "Website for an executive coaching and leadership development practice.",
     url: "https://tammybordeoscoaching.com",
-    screenshots: ["/projects/placeholder.svg"],
+    screenshots: [
+      "/projects/tammybordeos/tammy-1.png",
+      "/projects/tammybordeos/tammy-2.png",
+      "/projects/tammybordeos/tammy-3.png",
+    ],
     techStack: ["Web Development"],
     role: "Sole Developer",
     category: "client",
