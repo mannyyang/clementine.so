@@ -293,7 +293,7 @@ export function ProjectDetailCard({ project, description }: ProjectDetailCardPro
             <X className="h-5 w-5" />
           </button>
 
-          <div className="relative w-[90vw] max-w-5xl">
+          <div className="relative w-[90vw] max-w-7xl">
             <Carousel
               setApi={setExpandedApi}
               opts={{
