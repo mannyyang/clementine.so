@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useMemo, useCallback } from "react";
+import React, { useRef, useState, useMemo, useCallback, useEffect } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { ArrowDown, ArrowUp, Mail, Plus, Send } from "lucide-react";
@@ -63,6 +63,43 @@ function ScrollToBottomButton() {
       <ArrowDown className="h-4 w-4" />
     </button>
   );
+}
+
+// Auto-scroll manager - scrolls to bottom when messages change after user interaction
+function AutoScrollManager({
+  messageCount,
+  hasInteracted,
+  isStreaming
+}: {
+  messageCount: number;
+  hasInteracted: boolean;
+  isStreaming: boolean;
+}) {
+  const { scrollToBottom } = useStickToBottomContext();
+  const prevMessageCount = useRef(0);
+  const hasScrolledForStream = useRef(false);
+
+  useEffect(() => {
+    // Only scroll if user has interacted and message count increased
+    if (hasInteracted && messageCount > prevMessageCount.current) {
+      scrollToBottom();
+      hasScrolledForStream.current = false; // Reset for next stream
+    }
+    prevMessageCount.current = messageCount;
+  }, [messageCount, hasInteracted, scrollToBottom]);
+
+  // Also scroll when streaming starts (to show the loading indicator and new response)
+  useEffect(() => {
+    if (hasInteracted && isStreaming && !hasScrolledForStream.current) {
+      scrollToBottom();
+      hasScrolledForStream.current = true;
+    }
+    if (!isStreaming) {
+      hasScrolledForStream.current = false;
+    }
+  }, [isStreaming, hasInteracted, scrollToBottom]);
+
+  return null;
 }
 
 // Suggestions component
@@ -243,6 +280,7 @@ export function Chat() {
           )}
         </StickToBottom.Content>
         <ScrollToBottomButton />
+        <AutoScrollManager messageCount={messages.length} hasInteracted={hasInteracted} isStreaming={isLoading} />
       </StickToBottom>
 
       {/* Fixed bottom input area */}
